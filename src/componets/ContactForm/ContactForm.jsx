@@ -1,51 +1,48 @@
-import { useState } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
+// import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import * as actions from '../../redux/actions';
 import { v4 as uuidv4 } from 'uuid';
 
 import s from './ContactForm.module.css';
 
-export default function ContactForm({ onSubmit }) {
-  const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
+function ContactForm({ name, number, handleChangeName, handleChangeNumber }) {
+  // state = {
+  //   name: '',
+  //   number: '',
+  // };
 
-  const handleChange = event => {
-    const { name, value } = event.target;
+  // handleChange = event => {
+  //   const { name, value } = event.currentTarget;
 
-    switch (name) {
-      case 'name':
-        setName(value);
-        break;
-
-      case 'number':
-        setNumber(value);
-        break;
-
-      default:
-        return;
-    }
-  };
+  //   this.setState({ [name]: value });
+  // };
 
   const handleSabmit = event => {
     event.preventDefault();
 
-    onSubmit( name, number );
-
-    setName('');
-    setNumber('');
+    // this.props.onSubmit(this.state);
+    // this.reset();
   };
+
+  // reset = () => {
+  //   this.setState({ name: '', number: '' });
+  // };
+
+  // const { name, number } = this.state;
 
   const nameInputId = uuidv4();
   const numberInputId = uuidv4();
 
   return (
-    <form onSubmit={handleSabmit} className={s.form}>
+    <form className={s.form} onSubmit={handleSabmit}>
       <p className={s.title}>Name</p>
       <label htmlFor={nameInputId}>
         <input
           type="text"
           name="name"
           value={name}
-          onChange={handleChange}
+          onChange={() => handleChangeName()}
           pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
           title="Имя может состоять только из букв, апострофа, тире и пробелов. Например Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan и т. п."
           id={nameInputId}
@@ -60,7 +57,7 @@ export default function ContactForm({ onSubmit }) {
           type="tel"
           name="number"
           value={number}
-          onChange={handleChange}
+          onChange={() => handleChangeNumber()}
           pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
           title="Номер телефона должен состоять цифр и может содержать пробелы, тире, круглые скобки и может начинаться с +"
           id={numberInputId}
@@ -76,6 +73,20 @@ export default function ContactForm({ onSubmit }) {
   );
 }
 
-ContactForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
-};
+// ContactForm.propTypes = {
+//   onSubmit: PropTypes.func.isRequired,
+// };
+
+const mapStateToProps = state => ({
+  name: state.form.name,
+  number: state.form.number,
+});
+
+const mapDispatchToProps = dispatch => ({ 
+  handleChangeName: value => dispatch(actions.inputName(value)),
+  handleChangeNumber: value => dispatch(actions.inputNumber(value)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContactForm);
+
+//  <form onSubmit={this.handleSabmit} className={s.form}></form>
