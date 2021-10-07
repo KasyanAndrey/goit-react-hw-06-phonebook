@@ -18,32 +18,12 @@ Filter.propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
-const getVisibleContacts = (allContacts, filter) => {
-  const normalezedFilter = filter.toLowerCase();
-
-  return allContacts.filter(contact =>
-    contact.name.toLocaleLowerCase().includes(normalezedFilter),
-  );
-};
-
-const mapStateToProps = ({ contacts: { items, filter } }) => ({
-  contacts: getVisibleContacts(items, filter),
+const mapStateToProps = state => ({
+  value: state.contacts.filter,
 });
 
 const mapDispatchToProp = dispatch => ({
-  onChange: event => dispatch(contactsActions.changeFilter(event.currentTarget.value)),
+  onChange: event => dispatch(contactsActions.changeFilter(event.target.value)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProp)(Filter);
-
-// ----- или --------
-
-// const mapStateToProps = state => {
-//   const { items, filter } = state.contacts;
-
-//   const visibleContacts = getVisibleContacts(items, filter);
-
-//   return {
-//     value: visibleContacts,
-//   };
-// };
